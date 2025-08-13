@@ -1,6 +1,7 @@
 
 import React from 'react';
-
+import HeroImage from "../assests/heroImage.png"
+import { Link } from 'react-router-dom';
 const HeroSection = () => {
 	return (
 		<section className="py-16 bg-gray-100">
@@ -8,9 +9,9 @@ const HeroSection = () => {
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 					<div className="flex justify-center">
 						<img
-							src="/assets/hero-image.png"
+							src={HeroImage}
 							alt="Network Inventory Hero"
-							className="w-full max-w-md rounded-xl shadow-lg"
+							className="w-full max-w-2xl rounded-xl shadow-lg"
 						/>
 					</div>
 					<div>
@@ -18,7 +19,9 @@ const HeroSection = () => {
 						<p className="text-lg md:text-xl text-gray-700 mb-6">
 							Manage and track your network devices efficiently with our intuitive platform.
 						</p>
-						<button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">Get Started</button>
+						<button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+							<Link to={'/inventory'}>Get Started</Link>
+						</button>
 					</div>
 				</div>
 			</div>

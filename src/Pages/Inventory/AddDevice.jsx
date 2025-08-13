@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DeviceDetail from "./DeviceDetail";
+import DeviceDetail from "../../components/DeviceDetail";
 
 const AddDevice = () => {
   const [devicename, setdevicename] = useState("");

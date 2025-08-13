@@ -1,6 +1,7 @@
 import React from 'react'
 import { MdInventory } from 'react-icons/md'
 import { MdLogin } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 const Navbar = () => {
   return (
     <div className='w-full max-h-32 bg-black text-white flex items-center justify-between shadow-lg px-4'>
@@ -10,8 +11,10 @@ const Navbar = () => {
         </div>
         <div className='w-[40]'>
             <ul className='flex'>
-                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>Home</li>
-                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>Inventory</li>
+                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'><Link to="/">Home</Link></li>
+                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>
+                    <Link to="/inventory">Inventory</Link>
+                </li>
                 <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>Map</li>
                 <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>About Us</li>
             </ul>

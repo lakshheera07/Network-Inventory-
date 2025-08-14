@@ -1,10 +1,9 @@
-import AddDevice from "./components/AddDevice";
-import Home from "./Pages/HomePage/Home";
+import AppRoutes from "./routes/Routes";
 
 export default function App() {
   return (
     <>
-    <Home/>
+      <AppRoutes />
     </>
-  )
+  );
 }

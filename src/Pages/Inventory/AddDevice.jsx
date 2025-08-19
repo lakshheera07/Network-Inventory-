@@ -33,7 +33,7 @@ const AddDevice = () => {
         <div hidden = {!toast} className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-down">
           {toast}
         </div>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-400 p-5">
+      <div className="min-h-screen flex justify-center bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-400 p-5">
         <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8">
           <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
             Add Device

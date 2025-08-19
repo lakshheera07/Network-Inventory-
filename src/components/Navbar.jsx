@@ -2,27 +2,38 @@ import React from 'react'
 import { MdInventory } from 'react-icons/md'
 import { MdLogin } from 'react-icons/md'
 import { Link } from 'react-router-dom'
+
+const navLinks = [
+  { name: "Home", to: "/" },
+  { name: "Inventory", to: "/inventory" },
+  { name: "Find Devices", to: "/devices" },
+  { name: "Map", to: "/map" },
+  { name: "About Us", to: "/about-us" },
+];
+
 const Navbar = () => {
   return (
-    <div className='w-full max-h-32 bg-black text-white flex items-center justify-between shadow-lg px-4'>
-        <div className='flex items-center w-auto'>
-            <span className='text-2xl font-bold mx-2'>Network Inventory</span>
-            <MdInventory size={40} color='red'/>
-        </div>
-        <div className='w-[40]'>
-            <ul className='flex'>
-                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'><Link to="/">Home</Link></li>
-                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>
-                    <Link to="/inventory">Inventory</Link>
-                </li>
-                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>Map</li>
-                <li className='px-2 cursor-pointer hover:scale-110  duration-200 ease-in-out'>About Us</li>
-            </ul>
-        </div>
-        <div className='flex items-center mx-5'>
-            <input type="text" placeholder='Search Device' className='rounded-lg px-5 mr-5 ' />
-            <MdLogin size={40} color='green' className='cursor-pointer'/>
-        </div>
+    <div className='w-full h-24 bg-black text-white flex items-center justify-between shadow-lg px-4'>
+      <div className='flex items-center w-auto'>
+        <span className='text-4xl font-bold mx-2'>Network Inventory</span>
+        <MdInventory size={44} color='red'/>
+      </div>
+      <div>
+        <ul className='flex'>
+          {navLinks.map(link => (
+            <li
+              key={link.name}
+              className='px-3 cursor-pointer hover:text-teal-400 duration-200 ease-in-out text-xl'
+            >
+              <Link to={link.to}>{link.name}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className='flex items-center mx-5'>
+        <input type="text" placeholder='Search Device' className='rounded-lg px-5 mr-5 text-lg' />
+        <MdLogin size={44} color='green' className='cursor-pointer'/>
+      </div>
     </div>
   )
 }

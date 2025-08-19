@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-8 mt-10">
+    <footer className="bg-gray-900 text-gray-300 py-6 mt-0 w-full fixed bottom-0 left-0 z-50">
       <div className="container mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         
         {/* Brand / Logo */}
@@ -46,7 +46,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
+      <div className="border-t border-gray-700 mt-4 pt-2 text-center text-sm text-gray-500">
         © {new Date().getFullYear()} Network Inventory. All rights reserved.
       </div>
     </footer>

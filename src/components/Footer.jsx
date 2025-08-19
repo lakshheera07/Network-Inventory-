@@ -1,5 +1,19 @@
 import React from "react";
 
+const quickLinks = [
+  { name: "Home", href: "/" },
+  { name: "Inventory", href: "/inventory" },
+  { name: "Map", href: "/map" },
+  { name: "Find Devices", href: "/find-devices" },
+  { name: "About Us", href: "/about-us" },
+];
+
+const socialLinks = [
+  { name: "Twitter", href: "#", iconClass: "fab fa-twitter" },
+  { name: "LinkedIn", href: "#", iconClass: "fab fa-linkedin" },
+  { name: "GitHub", href: "#", iconClass: "fab fa-github" },
+];
+
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300 py-6 mt-0 w-full fixed bottom-0 left-0 z-50">
@@ -19,11 +33,11 @@ const Footer = () => {
         <div>
           <h2 className="text-lg font-semibold text-white mb-4">Quick Links</h2>
           <ul className="space-y-2">
-            <li><a href="/" className="hover:text-teal-400">Home</a></li>
-            <li><a href="/inventory" className="hover:text-teal-400">Inventory</a></li>
-            <li><a href="/map" className="hover:text-teal-400">Map</a></li>
-            <li><a href="/find-devices" className="hover:text-teal-400">Find Devices</a></li>
-            <li><a href="/about-us" className="hover:text-teal-400">About Us</a></li>
+            {quickLinks.map(link => (
+              <li key={link.name}>
+                <a href={link.href} className="hover:text-teal-400">{link.name}</a>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -33,15 +47,11 @@ const Footer = () => {
           <p>Email: <a href="mailto:support@networkapp.com" className="text-teal-400">support@networkapp.com</a></p>
           <p>Phone: <span className="text-teal-400">+91 98765 43210</span></p>
           <div className="flex space-x-4 mt-4">
-            <a href="#" className="hover:text-teal-400" aria-label="Twitter">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#" className="hover:text-teal-400" aria-label="LinkedIn">
-              <i className="fab fa-linkedin"></i>
-            </a>
-            <a href="#" className="hover:text-teal-400" aria-label="GitHub">
-              <i className="fab fa-github"></i>
-            </a>
+            {socialLinks.map(link => (
+              <a key={link.name} href={link.href} className="hover:text-teal-400" aria-label={link.name}>
+                <i className={link.iconClass}></i>
+              </a>
+            ))}
           </div>
         </div>
       </div>

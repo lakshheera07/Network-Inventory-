@@ -1,99 +1,71 @@
-import React, { useEffect, useState } from "react";
-const AddDevice = () => {
-  const [devicename, setdevicename] = useState("");
-  const [status, setstatus] = useState("");
-  const [type, settype] = useState("");
-  const [ip, setip] = useState("");
-  const [devices, setdevices] = useState([]);
+import React, { useState } from "react";
+import {useNavigate} from "react-router-dom";
+import DeviceForm from "../../components/DeviceForm";
+
+const AddDevice = ({ devices, setDevices }) => {
+  const [form, setForm] = useState({
+    componentName: "",
+    ip: "",
+    mac: "",
+    type: "",
+    location: "",
+    status: "",
+    manufacturer: "",
+    serialNumber: "",
+});
+  const [errors, setErrors] = useState({});
   const [toast, setToast] = useState(null);
 
-  useEffect(() => {}, [devices]);
+  const navigate = useNavigate();
 
-  const submitDevice = () => {
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const validate = () => {
+    const newErrors = {};
+    if (!form.componentName.trim()) newErrors.componentName = "Component name is required";
+    if (!/^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(form.ip))
+      newErrors.ip = "Invalid IP Address";
+    if (!/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(form.mac)) newErrors.mac = "Invalid MAC Address";
+    if (!["Physical", "Virtual"].includes(form.type)) newErrors.type = "Type must be Physical or Virtual";
+    if (!form.location.trim()) newErrors.location = "Location is required";
+    if (!["Active", "Inactive"].includes(form.status)) newErrors.status = "Status must be Active or Inactive";
+    if (!form.manufacturer.trim()) newErrors.manufacturer = "Manufacturer is required";
+    if (!form.serialNumber.trim()) newErrors.serialNumber = "Serial number is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (!validate()) return;
     const id = devices.length === 0 ? 0 : devices[devices.length - 1].id + 1;
-    setdevices([
-      ...devices,
-      { id: id, devicename: devicename, status: status, type: type, ip: ip },
-    ]);
-
+    setDevices([...devices, { id, ...form }]);
     setToast("✅ Device added successfully!");
-    setTimeout(() => setToast(null), 3000);
-
-    setdevicename("");
-    setstatus("");
-    settype("");
-    setip("");
+    setTimeout(() => {
+      setToast(null);
+      navigate("/inventory");
+    }, 2000);
   };
 
   return (
-    <>
-      <div hidden={!toast} className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-down">
-        {toast}
+    <div className="min-h-screen flex justify-center items-center pb-16">
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-6 mt-20">
+        <h2 className="text-3xl font-bold text-center mb-8">Add Device</h2>
+        <DeviceForm
+          form={form}
+          errors={errors}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          buttonLabel="Add Device"
+        />
       </div>
-      <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-400 p-5">
-        <div className="max-w-lg w-full bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
-            Add Device
-          </h2>
-
-          <form className="space-y-6">
-            <div>
-              <label className="block text-gray-700 mb-2">Device Name</label>
-              <input
-                type="text"
-                value={devicename}
-                onChange={(e) => setdevicename(e.target.value)}
-                placeholder="Enter device name"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 mb-2">Device Status</label>
-              <input
-                type="text"
-                value={status}
-                onChange={(e) => setstatus(e.target.value)}
-                placeholder="Active / Inactive"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 mb-2">Device Type</label>
-              <input
-                type="text"
-                value={type}
-                onChange={(e) => settype(e.target.value)}
-                placeholder="Router / Switch"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-700 mb-2">Device IP</label>
-              <input
-                type="text"
-                value={ip}
-                onChange={(e) => setip(e.target.value)}
-                placeholder="192.168.1.1"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-              />
-            </div>
-          </form>
-
-          <div className="mt-8 flex gap-4">
-            <button
-              type="button"
-              onClick={submitDevice}
-              className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white p-3 rounded-lg font-semibold transition duration-300 shadow-lg shadow-cyan-500/50"
-            >
-              Add Device
-            </button>
-          </div>
+      {toast && (
+        <div
+          className="fixed bottom-6 left-6 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-slide-in"
+        >
+          {toast}
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

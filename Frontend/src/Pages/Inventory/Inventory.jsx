@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import AddDevice from './AddDevice';
-import UpdateDevice from './UpdateDevice';
-import DeleteDevice from './DeleteDevice';
  
 const actions = [
   {
@@ -35,6 +32,11 @@ const actions = [
     color: "bg-gradient-to-r from-red-400 to-pink-500",
     key: "delete",
     path: "/inventory/delete",
+    icon: (
+      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5h2M12 7v2m0 4v6m-7-7h14" />
+      </svg>
+    ),
   },
 ];
  

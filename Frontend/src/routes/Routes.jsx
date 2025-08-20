@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Inventory from "../Pages/Inventory/Inventory";
@@ -11,6 +11,8 @@ import FindDevice from "../Pages/FindDevices/FindDevice";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 
 const AppRoutes = () => {
+  const [devices, setDevices] = useState([]);
+
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
@@ -18,7 +20,10 @@ const AppRoutes = () => {
 
         {/* Inventory Routes */}
         <Route path="inventory" element={<Inventory />} />
-        <Route path="inventory/add" element={<AddDevice />} />
+        <Route
+          path="inventory/add"
+          element={<AddDevice devices={devices} setDevices={setDevices} />}
+        />
         <Route path="inventory/update" element={<UpdateDevice />} />
         <Route path="inventory/delete" element={<DeleteDevice />} />
 

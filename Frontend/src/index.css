@@ -3,17 +3,18 @@
 @tailwind utilities;
 
 
-@keyframes fade-in-down {
+@keyframes slide-in {
   0% {
+    transform: translateX(-100%);
     opacity: 0;
-    transform: translate(-50%, -20px);
   }
   100% {
+    transform: translateX(0);
     opacity: 1;
-    transform: translate(-50%, 0);
   }
 }
-.animate-fade-in-down {
-  animation: fade-in-down 0.3s ease-out;
+
+.animate-slide-in {
+  animation: slide-in 0.4s ease-out forwards;
 }
 

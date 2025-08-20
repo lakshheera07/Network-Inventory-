@@ -15,7 +15,7 @@ const Navbar = () => {
   const [active, setActive] = useState(navLinks[0].to);
 
   return (
-    <div className='w-full h-24 bg-black text-white flex items-center justify-between shadow-lg px-4'>
+    <div className='w-full h-24 bg-black text-white flex items-center justify-between shadow-lg px-4 sticky top-0 z-50'>
       <div className='flex items-center w-auto'>
         <span className='text-4xl font-bold mx-2'>Network Inventory</span>
         <MdInventory size={44} color='red'/>

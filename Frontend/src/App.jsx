@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import AppRoutes from "./routes/Routes";
 
-export default function App() {
-  return (
-    <>
-      <AppRoutes />
-    </>
-  );
-}
+const App = () => {
+  const [devices, setDevices] = useState([]);
+  return <AppRoutes devices={devices} setDevices={setDevices} />;
+};
+
+export default App;

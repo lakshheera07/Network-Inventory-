@@ -11,7 +11,7 @@ export default function UpdateDevice() {
 
   const navigate = useNavigate();
 
-  // Fetch devices from backend
+  // Fetch devices
   useEffect(() => {
     fetch("http://localhost:5000/api/devices")
       .then((res) => res.json())
@@ -35,6 +35,7 @@ export default function UpdateDevice() {
         manufacturer: device.manufacturer || "",
         serialNumber: device.serialNumber || "",
       });
+      setErrors({});
     }
   };
 
@@ -43,27 +44,44 @@ export default function UpdateDevice() {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = async () => {
-    let newErrors = {};
-    if (!form.componentName) newErrors.componentName = "Component name is required";
-    if (!form.ip) newErrors.ip = "IP is required";
-    if (!form.location) newErrors.location = "Location is required";
-    if (!form.status) newErrors.status = "Status is required";
+  const validate = () => {
+    const newErrors = {};
+    if (!form.componentName.trim())
+      newErrors.componentName = "Component name is required";
+    if (
+      !/^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(
+        form.ip
+      )
+    )
+      newErrors.ip = "Invalid IP Address";
+    if (!/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(form.mac))
+      newErrors.mac = "Invalid MAC Address";
+    if (!["Physical", "Virtual"].includes(form.type))
+      newErrors.type = "Type must be Physical or Virtual";
+    if (!form.location.trim())
+      newErrors.location = "Location is required";
+    if (!["Active", "Inactive"].includes(form.status))
+      newErrors.status = "Status must be Active or Inactive";
+    if (!form.manufacturer.trim())
+      newErrors.manufacturer = "Manufacturer is required";
+    if (!form.serialNumber.trim())
+      newErrors.serialNumber = "Serial number is required";
 
     setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+    return Object.keys(newErrors).length === 0;
+  };
 
-    const updatedDevice = {
-      ...form,
-      componentName: form.componentName,
-    };
+  const handleSubmit = async () => {
+    if (!validate()) return;
 
     try {
       const response = await fetch(`http://localhost:5000/api/devices/${selectedId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedDevice),
+        body: JSON.stringify(form),
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         setToast("✅ Device updated successfully!");
@@ -72,7 +90,11 @@ export default function UpdateDevice() {
           navigate("/inventory");
         }, 2000);
       } else {
-        setToast("❌ Failed to update device.");
+        if (data.errors) {
+          setErrors(data.errors); // backend multiple validation errors
+        } else {
+          setToast("❌ " + (data.error || "Failed to update device."));
+        }
       }
     } catch (error) {
       console.error("Error updating device:", error);

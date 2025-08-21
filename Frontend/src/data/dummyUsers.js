@@ -26,4 +26,4 @@ const dummyUsers = [
   },
 ];
 
-export default dummyUsers;
+export default dummyUsers

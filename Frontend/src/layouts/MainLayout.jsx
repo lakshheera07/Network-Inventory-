@@ -10,13 +10,23 @@ const MainLayout = () => {
     '/inventory/update',
     '/inventory/delete',
   ];
+
+  const hideNavbarRoutes = [
+    '/login',
+    '/register'
+  ];
+
+  const hideNavbar = hideNavbarRoutes.some(route =>
+    location.pathname.startsWith(route)
+  );
+
   const hideFooter = hideFooterRoutes.some(route =>
     location.pathname.startsWith(route)
   );
 
   return (
     <>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <main>
         <Outlet />
       </main>
@@ -25,4 +35,4 @@ const MainLayout = () => {
   );
 };
 
-export default MainLayout;
+export default MainLayout

@@ -51,8 +51,6 @@ const AddDevice = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validate()) return;
-
     try {
       const response = await fetch("http://localhost:5000/api/devices", {
         method: "POST",
@@ -60,20 +58,30 @@ const AddDevice = () => {
         body: JSON.stringify(form),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         setToast("✅ Device added successfully!");
+        setErrors({});
         setTimeout(() => {
           setToast(null);
           navigate("/inventory");
         }, 2000);
       } else {
-        setToast("❌ Failed to add device.");
+        if (data.errors) {
+          // ✅ directly set ALL backend errors
+          setErrors(data.errors);
+        } else {
+          setToast("❌ " + (data.error || "Failed to add device."));
+        }
       }
     } catch (error) {
       console.error("Error adding device:", error);
       setToast("❌ Server error.");
     }
   };
+
+
 
   return (
     <div className="min-h-screen flex justify-center items-center pb-16">

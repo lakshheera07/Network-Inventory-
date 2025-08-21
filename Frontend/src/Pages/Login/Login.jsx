@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const Login = () => {
-  const [form, setForm] = useState({ username: "", email: "" });
+  const [form, setForm] = useState({ username: "", password: "" });
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
     if (!form.username) newErrors.username = "Username is required";
@@ -19,11 +20,26 @@ const Login = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    setToast("✅ Login successful!");
-    setTimeout(() => {
-      setToast(null);
-      navigate("/");
-    }, 1500);
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        Cookies.set("accessToken", data.accessToken, { expires: 1 }); // expires in 1 day
+        setToast("✅ Login successful!");
+        setTimeout(() => {
+          setToast(null);
+          navigate("/home");
+        }, 1500);
+      } else {
+        setToast("❌ " + (data.error || "Login failed"));
+      }
+    } catch (err) {
+      setToast("❌ Server error");
+    }
   };
 
   return (
@@ -89,4 +105,4 @@ const Login = () => {
   );
 };
 
-export default Login
+export default Login;

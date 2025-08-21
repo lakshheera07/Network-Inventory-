@@ -1,11 +1,9 @@
-// UpdateDevice.jsx
-import React, { useState } from "react";
-import devicesData from "../../data/dummyData";
+import React, { useEffect, useState } from "react";
 import DeviceForm from "../../components/DeviceForm";
 import { useNavigate } from "react-router-dom";
 
 export default function UpdateDevice() {
-  const [devices, setDevices] = useState(devicesData);
+  const [devices, setDevices] = useState([]);
   const [selectedId, setSelectedId] = useState("");
   const [form, setForm] = useState(null);
   const [errors, setErrors] = useState({});
@@ -13,15 +11,22 @@ export default function UpdateDevice() {
 
   const navigate = useNavigate();
 
+  // Fetch devices from backend
+  useEffect(() => {
+    fetch("http://localhost:5000/api/devices")
+      .then((res) => res.json())
+      .then((data) => setDevices(data))
+      .catch((err) => console.error("Error fetching devices:", err));
+  }, []);
+
   const handleSelect = (e) => {
     const id = e.target.value;
     setSelectedId(id);
-    const device = devices.find((d) => d.id === parseInt(id));
+    const device = devices.find((d) => d._id === id);
 
     if (device) {
       setForm({
-        id: device.id,
-        componentName: device.devicename,
+        componentName: device.componentName,
         ip: device.ip,
         mac: device.mac,
         type: device.type,
@@ -38,7 +43,7 @@ export default function UpdateDevice() {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let newErrors = {};
     if (!form.componentName) newErrors.componentName = "Component name is required";
     if (!form.ip) newErrors.ip = "IP is required";
@@ -50,19 +55,29 @@ export default function UpdateDevice() {
 
     const updatedDevice = {
       ...form,
-      devicename: form.componentName,
+      componentName: form.componentName,
     };
 
-    const updatedList = devices.map((d) =>
-      d.id === updatedDevice.id ? updatedDevice : d
-    );
-    setDevices(updatedList);
+    try {
+      const response = await fetch(`http://localhost:5000/api/devices/${selectedId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedDevice),
+      });
 
-    setToast("✅ Device updated successfully!");
-    setTimeout(() => {
-      setToast(null);
-      navigate("/inventory");
-    }, 2000);
+      if (response.ok) {
+        setToast("✅ Device updated successfully!");
+        setTimeout(() => {
+          setToast(null);
+          navigate("/inventory");
+        }, 2000);
+      } else {
+        setToast("❌ Failed to update device.");
+      }
+    } catch (error) {
+      console.error("Error updating device:", error);
+      setToast("❌ Server error.");
+    }
   };
 
   return (
@@ -81,8 +96,8 @@ export default function UpdateDevice() {
         >
           <option value="">-- Select a device --</option>
           {devices.map((device) => (
-            <option key={device.id} value={device.id}>
-              {device.devicename}
+            <option key={device._id} value={device._id}>
+              {device.componentName}
             </option>
           ))}
         </select>

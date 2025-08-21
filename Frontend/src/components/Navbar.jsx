@@ -9,6 +9,7 @@ const navLinks = [
   { name: "Find Devices", to: "/find-devices" },
   { name: "Map", to: "/map" },
   { name: "About Us", to: "/about-us" },
+  { name: "Admin Dashboard", to: "/admin" }
 ];
 
 const Navbar = () => {
@@ -34,8 +35,9 @@ const Navbar = () => {
         </ul>
       </div>
       <div className='flex items-center mx-5'>
-        <input type="text" placeholder='Search Device' className='rounded-lg px-5 mr-5 text-lg' />
-        <MdLogin size={44} color='green' className='cursor-pointer'/>
+        <Link to="/login">
+          <MdLogin size={44} color='green' className='cursor-pointer' />
+        </Link>
       </div>
     </div>
   )

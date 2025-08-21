@@ -9,6 +9,9 @@ import Map from "../Pages/Map/Map";
 import Home from "../Pages/HomePage/Home";
 import FindDevice from "../Pages/FindDevices/FindDevice";
 import AboutUs from "../Pages/AboutUs/AboutUs";
+import Login from "../Pages/Login/Login";
+import Register from "../Pages/Login/Register";
+import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard"
 
 const AppRoutes = () => {
   const [devices, setDevices] = useState([]);
@@ -35,6 +38,13 @@ const AppRoutes = () => {
 
         {/* About Us Route */}
         <Route path="about-us" element={<AboutUs />} />
+
+        {/* Login Routes */}
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+
+        {/* Admin Routes */}
+        <Route path="admin" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );

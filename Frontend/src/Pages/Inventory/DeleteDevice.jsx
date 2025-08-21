@@ -1,24 +1,43 @@
-import React, { useState } from "react";
-import devicesData from "../../data/dummyData";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const DeleteDevice = () => {
-  const [devices, setDevices] = useState(devicesData);
+  const [devices, setDevices] = useState([]);
   const [selectedId, setSelectedId] = useState("");
   const [toast, setToast] = useState(null);
 
   const navigate = useNavigate();
 
-  const handleDelete = () => {
-    if (!selectedId) return;
-    const updatedList = devices.filter((d) => d.id !== parseInt(selectedId));
-    setDevices(updatedList);
+  // Fetch devices from backend
+  useEffect(() => {
+    fetch("http://localhost:5000/api/devices")
+      .then((res) => res.json())
+      .then((data) => setDevices(data))
+      .catch((err) => console.error("Error fetching devices:", err));
+  }, []);
 
-    setToast("🗑️ Device deleted successfully!");
-    setTimeout(() => {
-      setToast(null);
-      navigate("/inventory");
-    }, 2000);
+  const handleDelete = async () => {
+    if (!selectedId) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/devices/${selectedId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setToast("🗑️ Device deleted successfully!");
+        setDevices(devices.filter((d) => d._id !== selectedId));
+        setTimeout(() => {
+          setToast(null);
+          navigate("/inventory");
+        }, 2000);
+      } else {
+        setToast("❌ Failed to delete device.");
+      }
+    } catch (error) {
+      console.error("Error deleting device:", error);
+      setToast("❌ Server error.");
+    }
   };
 
   return (
@@ -37,8 +56,8 @@ const DeleteDevice = () => {
         >
           <option value="">-- Select a device --</option>
           {devices.map((device) => (
-            <option key={device.id} value={device.id}>
-              {device.devicename}
+            <option key={device._id} value={device._id}>
+              {device.componentName}
             </option>
           ))}
         </select>

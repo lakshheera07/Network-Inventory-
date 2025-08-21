@@ -11,17 +11,20 @@ import FindDevice from "../Pages/FindDevices/FindDevice";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 import Login from "../Pages/Login/Login";
 import Register from "../Pages/Login/Register";
-import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard"
+import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard";
 
 const AppRoutes = () => {
   const [devices, setDevices] = useState([]);
 
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
+      {/* Public routes */}
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-        {/* Inventory Routes */}
+      {/* Protected routes under MainLayout */}
+      <Route path="/home" element={<MainLayout />}>
+        <Route index element={<Home />} />
         <Route path="inventory" element={<Inventory />} />
         <Route
           path="inventory/add"
@@ -29,25 +32,13 @@ const AppRoutes = () => {
         />
         <Route path="inventory/update" element={<UpdateDevice />} />
         <Route path="inventory/delete" element={<DeleteDevice />} />
-
-        {/* Map Routes */}
         <Route path="map" element={<Map />} />
-
-        {/* Find Devices Route */}
         <Route path="find-devices" element={<FindDevice />} />
-
-        {/* About Us Route */}
         <Route path="about-us" element={<AboutUs />} />
-
-        {/* Login Routes */}
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-
-        {/* Admin Routes */}
         <Route path="admin" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );
 };
 
-export default AppRoutes
+export default AppRoutes;

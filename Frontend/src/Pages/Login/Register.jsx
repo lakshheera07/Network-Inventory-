@@ -12,22 +12,24 @@ const Register = () => {
   };
 
   const validatePassword = (password) => {
-    // At least one uppercase, one lowercase, one special character, and min 8 chars
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
     return regex.test(password);
   };
 
   const validateUsername = (username) => {
-    // At least 4 chars, only letters, numbers, underscores, no spaces
     const regex = /^[a-zA-Z0-9_]{4,}$/;
     return regex.test(username);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
     if (!form.fullname) newErrors.fullname = "Full name is required";
-    if (!form.username) newErrors.username = "Username is required";
+    if (!form.username) { 
+        newErrors.username = "Username is required"; 
+    } else if (!validateUsername(form.username)) {
+        newErrors.username = "Username must be at least 4 characters and can only contain letters, numbers, and underscores";
+    }
     if (!form.password) {
       newErrors.password = "Password is required";
     } else if (!validatePassword(form.password)) {
@@ -37,11 +39,26 @@ const Register = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    setToast("✅ Registration successful!");
-    setTimeout(() => {
-      setToast(null);
-      navigate("/login");
-    }, 1500);
+    // Connect with backend
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setToast("✅ Registration successful!");
+        setTimeout(() => {
+          setToast(null);
+          navigate("/");
+        }, 1500);
+      } else {
+        setToast("❌ " + (data.error || "Registration failed"));
+      }
+    } catch (err) {
+      setToast("❌ Server error");
+    }
   };
 
   return (
@@ -114,4 +131,4 @@ const Register = () => {
   );
 };
 
-export default Register
+export default Register;

@@ -25,17 +25,17 @@ const AppRoutes = () => {
       {/* Protected routes under MainLayout */}
       <Route path="/home" element={<MainLayout />}>
         <Route index element={<Home />} />
-        <Route path="inventory" element={<Inventory />} />
-        <Route
-          path="inventory/add"
-          element={<AddDevice devices={devices} setDevices={setDevices} />}
-        />
-        <Route path="inventory/update" element={<UpdateDevice />} />
-        <Route path="inventory/delete" element={<DeleteDevice />} />
-        <Route path="map" element={<Map />} />
-        <Route path="find-devices" element={<FindDevice />} />
-        <Route path="about-us" element={<AboutUs />} />
-        <Route path="admin" element={<AdminDashboard />} />
+      <Route path="inventory" element={<Inventory />} />
+      <Route
+        path="inventory/add"
+        element={<AddDevice devices={devices} setDevices={setDevices} />}
+      />
+      <Route path="inventory/update" element={<UpdateDevice />} />
+      <Route path="inventory/delete" element={<DeleteDevice />} />
+      <Route path="map" element={<Map />} />
+      <Route path="find-devices" element={<FindDevice />} />
+      <Route path="about-us" element={<AboutUs />} />
+      <Route path="admin" element={<AdminDashboard />} />
       </Route>
     </Routes>
   );

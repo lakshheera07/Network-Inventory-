@@ -42,6 +42,24 @@ const Login = () => {
     }
   };
 
+  const fetchUserProfile = async () => {
+    const token = Cookies.get("accessToken");
+    if (!token) return null;
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Unauthorized");
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Error fetching user profile:", err);
+      return null;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-400">
       {toast && (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DeviceForm from "../../components/DeviceForm";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function UpdateDevice() {
   const [devices, setDevices] = useState([]);
@@ -10,14 +10,36 @@ export default function UpdateDevice() {
   const [toast, setToast] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch devices
   useEffect(() => {
     fetch("http://localhost:5000/api/devices")
       .then((res) => res.json())
-      .then((data) => setDevices(data))
+      .then((data) => {
+        setDevices(data);
+
+        // If coming from FindDevices with state
+        if (location.state?.device) {
+          const device = location.state.device;
+          setSelectedId(device._id);
+          setForm({
+            componentName: device.componentName,
+            ip: device.ip,
+            mac: device.mac,
+            type: device.type,
+            location: device.location || "",
+            status: device.status,
+            manufacturer: device.manufacturer || "",
+            serialNumber: device.serialNumber || "",
+            category: device.category || "",
+            latitude: device.latitude || "",
+            longitude: device.longitude || "",
+          });
+        }
+      })
       .catch((err) => console.error("Error fetching devices:", err));
-  }, []);
+  }, [location.state]);
 
   const handleSelect = (e) => {
     const id = e.target.value;
@@ -34,6 +56,9 @@ export default function UpdateDevice() {
         status: device.status,
         manufacturer: device.manufacturer || "",
         serialNumber: device.serialNumber || "",
+        category: device.category || "",
+        latitude: device.latitude || "",
+        longitude: device.longitude || "",
       });
       setErrors({});
     }
@@ -66,6 +91,12 @@ export default function UpdateDevice() {
       newErrors.manufacturer = "Manufacturer is required";
     if (!form.serialNumber.trim())
       newErrors.serialNumber = "Serial number is required";
+    if (!["Router", "Firewall", "Server", "Switch"].includes(form.category))
+      newErrors.category = "Category must be one of Router, Firewall, Server, Switch";
+    if (!/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/.test(form.latitude))
+      newErrors.latitude = "Invalid latitude";
+    if (!/^[-+]?((1[0-7]\d)|(\d{1,2}))(\.\d+)?|180(\.0+)?$/.test(form.longitude))
+      newErrors.longitude = "Invalid longitude";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -91,7 +122,7 @@ export default function UpdateDevice() {
         }, 2000);
       } else {
         if (data.errors) {
-          setErrors(data.errors); // backend multiple validation errors
+          setErrors(data.errors);
         } else {
           setToast("❌ " + (data.error || "Failed to update device."));
         }

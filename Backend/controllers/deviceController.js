@@ -1,7 +1,7 @@
 import Device from "../models/Device.js";
 
 // Get all devices
-export const getDevices = async (req, res)  => {
+export const getDevices = async (req, res) => {
   try {
     const devices = await Device.find();
     res.json(devices);
@@ -11,14 +11,14 @@ export const getDevices = async (req, res)  => {
 };
 
 // Add new device
-export const addDevice  = async (req, res) => {
+export const addDevice = async (req, res) => {
   try {
     const { ip, mac, serialNumber } = req.body;
-
     const errors = {};
 
-    // Schema validation happens in Mongoose
     const device = new Device(req.body);
+
+    // Validate schema
     try {
       await device.validate();
     } catch (validationError) {
@@ -27,7 +27,7 @@ export const addDevice  = async (req, res) => {
       });
     }
 
-    // Uniqueness check manually
+    // Uniqueness checks
     if (await Device.findOne({ ip })) {
       errors.ip = `IP "${ip}" already exists`;
     }
@@ -62,10 +62,9 @@ export const updateDevice = async (req, res) => {
       return res.status(404).json({ error: "Device not found" });
     }
 
-    // Update only provided fields
     Object.assign(device, req.body);
 
-    // Validate schema rules
+    // Validate schema
     try {
       await device.validate();
     } catch (validationError) {
@@ -74,7 +73,7 @@ export const updateDevice = async (req, res) => {
       });
     }
 
-    // Uniqueness checks (excluding current device)
+    // Uniqueness checks
     if (ip && await Device.findOne({ ip, _id: { $ne: id } })) {
       errors.ip = `IP "${ip}" already exists`;
     }
@@ -97,7 +96,6 @@ export const updateDevice = async (req, res) => {
   }
 };
 
-
 // Delete device
 export const deleteDevice = async (req, res) => {
   try {
@@ -112,9 +110,8 @@ export const deleteDevice = async (req, res) => {
   }
 };
 
-
 // Search devices
-export const searchDevices  = async (req, res) => {
+export const searchDevices = async (req, res) => {
   const { status, type, location } = req.query;
   const query = {};
   if (status) query.status = status;

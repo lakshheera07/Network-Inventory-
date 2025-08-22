@@ -7,7 +7,7 @@ const actions = [
     description: "Register a new network device to your inventory.",
     color: "bg-gradient-to-r from-green-400 to-blue-500",
     key: "add",
-    path: "/inventory/add",
+    path: "/home/inventory/add",
     icon: (
       <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -19,7 +19,7 @@ const actions = [
     description: "Modify details of an existing device.",
     color: "bg-gradient-to-r from-yellow-400 to-orange-500",
     key: "update",
-    path: "/inventory/update",
+    path: "/home/inventory/update",
     icon: (
       <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M11 5h2M12 7v2m0 4v6m-7-7h14" />
@@ -31,7 +31,7 @@ const actions = [
     description: "Remove a device from your inventory.",
     color: "bg-gradient-to-r from-red-400 to-pink-500",
     key: "delete",
-    path: "/inventory/delete",
+    path: "/home/inventory/delete",
     icon: (
       <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M11 5h2M12 7v2m0 4v6m-7-7h14" />

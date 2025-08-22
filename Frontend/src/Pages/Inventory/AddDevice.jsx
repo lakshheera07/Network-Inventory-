@@ -12,7 +12,11 @@ const AddDevice = () => {
     status: "",
     manufacturer: "",
     serialNumber: "",
+    category: "",
+    latitude: "",
+    longitude: "",
   });
+
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState(null);
 
@@ -31,9 +35,7 @@ const AddDevice = () => {
       )
     )
       newErrors.ip = "Invalid IP Address";
-    if (
-      !/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(form.mac)
-    )
+    if (!/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(form.mac))
       newErrors.mac = "Invalid MAC Address";
     if (!["Physical", "Virtual"].includes(form.type))
       newErrors.type = "Type must be Physical or Virtual";
@@ -45,6 +47,12 @@ const AddDevice = () => {
       newErrors.manufacturer = "Manufacturer is required";
     if (!form.serialNumber.trim())
       newErrors.serialNumber = "Serial number is required";
+    if (!["Router", "Firewall", "Server", "Switch"].includes(form.category))
+      newErrors.category = "Category must be one of Router, Firewall, Server, Switch";
+    if (!/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/.test(form.latitude))
+      newErrors.latitude = "Invalid latitude";
+    if (!/^[-+]?((1[0-7]\d)|(\d{1,2}))(\.\d+)?|180(\.0+)?$/.test(form.longitude))
+      newErrors.longitude = "Invalid longitude";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -69,7 +77,6 @@ const AddDevice = () => {
         }, 2000);
       } else {
         if (data.errors) {
-          // ✅ directly set ALL backend errors
           setErrors(data.errors);
         } else {
           setToast("❌ " + (data.error || "Failed to add device."));
@@ -80,8 +87,6 @@ const AddDevice = () => {
       setToast("❌ Server error.");
     }
   };
-
-
 
   return (
     <div className="min-h-screen flex justify-center items-center pb-16">

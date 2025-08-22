@@ -34,11 +34,35 @@ const deviceSchema = new mongoose.Schema({
       message: "{VALUE} is not a valid device type",
     },
   },
+  category: {
+    type: String,
+    required: [true, "Category is required"],
+    enum: {
+      values: ["Router", "Firewall", "Server", "Switch"],
+      message: "{VALUE} is not a valid category",
+    },
+  },
   location: {
     type: String,
     required: [true, "Location is required"],
     trim: true,
     maxlength: [200, "Location cannot exceed 200 characters"],
+  },
+  latitude: {
+    type: String,
+    required: [true, "Latitude is required"],
+    match: [
+      /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/,
+      "Please provide a valid latitude",
+    ],
+  },
+  longitude: {
+    type: String,
+    required: [true, "Longitude is required"],
+    match: [
+      /^[-+]?((1[0-7]\d)|(\d{1,2}))(\.\d+)?|180(\.0+)?$/,
+      "Please provide a valid longitude",
+    ],
   },
   status: {
     type: String,

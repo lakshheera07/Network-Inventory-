@@ -196,7 +196,7 @@ export default function FindDevice() {
                 <div className="flex gap-3">
                   <button
                     onClick={() =>
-                      navigate("/inventory/update", { state: { device: selectedDevice } })
+                      navigate("/home/inventory/update", { state: { device: selectedDevice } })
                     }
                     className="flex items-center gap-2 px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100 transition"
                   >

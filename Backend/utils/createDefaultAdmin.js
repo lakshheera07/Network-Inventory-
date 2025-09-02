@@ -4,22 +4,23 @@ import User from "../models/Users.models.js";
 
 dotenv.config();
 
+console.log("MONGO_URI:", process.env.MONGO_URI);
+
 const createDefaultNetworkAdmin = async () => {
-  await mongoose.connect(process.env.MONGO_URI, {
+  await mongoose.connect("mongodb://localhost:27017/network-inventory", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
 
-  const existingAdmin = await User.findOne({ username: process.env.ADMIN_USERNAME });
+  const existingAdmin = await User.findOne({ username: "lakshheera18" });
   if (existingAdmin) {
     console.log("Default networkAdmin already exists.");
     return;
   }
 
   const admin = new User({
-    fullname: process.env.ADMIN_FULLNAME,
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD,
+    username: "lakshheera18",
+    password: "Laksh@25.09",
     role: "networkAdmin",
   });
 

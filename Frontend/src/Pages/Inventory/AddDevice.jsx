@@ -73,7 +73,7 @@ const AddDevice = () => {
         setErrors({});
         setTimeout(() => {
           setToast(null);
-          navigate("/inventory");
+          navigate("/home/inventory");
         }, 2000);
       } else {
         if (data.errors) {

@@ -17,45 +17,28 @@ const navLinks = [
 const Navbar = () => {
   const [active, setActive] = useState(navLinks[0].to);
   const [showProfile, setShowProfile] = useState(false);
-  const [user, setUser] = useState({ username: "", role: "" });
-
-  useEffect(() => {
-    // Example: get token from localStorage
-    const token = Cookies.get("accessToken");
-    if (token) {
-      fetch("http://localhost:5000/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.username && data.role) {
-            setUser({ username: data.username, role: data.role });
-          }
-        })
-        .catch(() => setUser({ username: "", role: "" }));
-    }
-  }, []);
+  const username = Cookies.get("username") || "";
+  const role = Cookies.get("role") || "";
 
   const handleLogout = () => {
     setShowProfile(false);
-    localStorage.removeItem("accessToken");
-    setUser({ username: "", role: "" });
-    // Add your logout logic here (e.g., redirect to login)
+    Cookies.remove("accessToken");
+    Cookies.remove("username");
+    Cookies.remove("role");
+    window.location.href = "/";
   };
 
   return (
     <>
       <div className='w-full h-24 bg-black text-white flex items-center justify-between shadow-lg px-4 sticky top-0 z-50'>
         <div className='flex items-center w-auto'>
-          <span className='text-4xl font-bold mx-2'>Network Inventory</span>
+          <span className='text-4xl font-bold mx-2'>NetStore</span>
           <MdInventory size={44} color='red'/>
         </div>
         <div>
           <ul className='flex'>
             {navLinks
-              .filter(link => link.name !== "Admin Dashboard" || user.role === "networkAdmin")
+              .filter(link => link.name !== "Admin Dashboard" || role === "networkAdmin")
               .map(link => (
                 <li
                   key={link.name}
@@ -84,8 +67,8 @@ const Navbar = () => {
         style={{ width: "320px" }}
       >
         <UserProfile
-          username={user.username}
-          role={user.role}
+          username={username}
+          role={role}
           onLogout={handleLogout}
           onClose={() => setShowProfile(false)}
         />

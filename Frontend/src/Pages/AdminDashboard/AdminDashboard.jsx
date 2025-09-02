@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import dummyUsers from "../../data/dummyUsers";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState(dummyUsers);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState({ name: "", email: "" });
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/auth/request-users")
+      .then((res) => res.json())
+      .then((data) => setRequests(data))
+      .catch(() => setRequests([]));
+  }, []);
 
   const handleRoleChange = (index, newRole) => {
     const updatedUsers = [...users];
@@ -35,9 +43,19 @@ const AdminDashboard = () => {
     setEditIdx(null);
   };
 
+  const handleApprove = (id) => {
+    // Implement approve logic here
+    alert(`Approved request ${id}`);
+  };
+
+  const handleReject = (id) => {
+    // Implement reject logic here
+    alert(`Rejected request ${id}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8 text-gray-800">Active Users</h1>
       <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-8">
         <table className="w-full table-auto border-collapse">
           <thead>
@@ -123,8 +141,67 @@ const AdminDashboard = () => {
           </tbody>
         </table>
       </div>
+      <div className="w-full max-w-3xl mt-12">
+        <h2 className="text-2xl font-bold mb-4 text-gray-700">
+          Access Requests
+        </h2>
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="py-2 px-3">Sno</th>
+                <th className="py-2 px-3">Username</th>
+                <th className="py-2 px-3">Password</th>
+                <th className="py-2 px-3">Request Message</th>
+                <th className="py-2 px-3">Requested Role</th>
+                <th className="py-2 px-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requests.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-4 text-center text-gray-500">
+                    No requests found.
+                  </td>
+                </tr>
+              ) : (
+                requests.map((req, idx) => (
+                  <tr key={req._id} className="border-b">
+                    <td className="py-2 px-3">{idx + 1}</td>
+                    <td className="py-2 px-3">{req.username}</td>
+                    <td className="py-2 px-3">
+                      <input
+                        type="password"
+                        value={req.password}
+                        readOnly
+                        className="bg-gray-100 px-2 py-1 rounded w-32"
+                      />
+                    </td>
+                    <td className="py-2 px-3">{req.requestMessage}</td>
+                    <td className="py-2 px-3">{req.requestedRole}</td>
+                    <td className="py-2 px-3 flex gap-2">
+                      <button
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded"
+                        onClick={() => handleApprove(req._id)}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+                        onClick={() => handleReject(req._id)}
+                      >
+                        Reject
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default AdminDashboard
+export default AdminDashboard;

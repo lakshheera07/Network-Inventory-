@@ -2,15 +2,10 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
-    fullname: {
+    username:{
         type: String,
-        required: true
-    },
-    username: {
-        type: String,
-        required: true,
         unique: true,
-        match: /^[a-zA-Z0-9_]{4,}$/
+        required: true
     },
     password: {
         type: String,
@@ -24,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     refreshToken: {
         type: String,
-        default: ""
+        default: null
     }
 }, { timestamps: true });
 
@@ -40,5 +35,5 @@ userSchema.pre("save", async function (next) {
     }
 });
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema, 'users');
 export default User;

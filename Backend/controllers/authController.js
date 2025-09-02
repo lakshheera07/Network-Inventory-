@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/Users.models.js";
+import Request from "../models/Request.model.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "your_jwt_refresh_secret";
@@ -85,4 +86,35 @@ const logout = async (req, res) => {
   }
 };
 
-export { register, login, logout };
+const requestAccess = async (req, res) => {
+  try {
+    const { username, password, requestMessage, requestedRole } = req.body;
+
+    // Create a new access request
+    const request = new Request({
+      username,
+      password,
+      requestMessage,
+      requestedRole,
+    });
+
+    await request.save();
+    res.status(201).json({ message: "Access request submitted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+    console.error(error);
+  }
+};
+
+const requestedUsers = async (req, res) => {
+  try {
+    const requests = await Request.find();
+    res.json(requests);
+  }
+  catch(error){
+    res.status(500).json({ error: "can't fetch requests" });
+    console.error(error);
+  }
+};
+
+export { register, login, logout, requestedUsers };

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
     return (
-        <section className="pt-16 pb-16 bg-gray-100">
+        <section className="pt-16 pb-16 bg-gray-100 h-screen">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div className="flex justify-center">
@@ -19,7 +19,7 @@ const HeroSection = () => {
                         <p className="text-lg md:text-xl text-gray-700 mb-6">
                             Manage and track your network devices efficiently with our intuitive platform.
                         </p>
-                        <Link to="/inventory">
+                        <Link to="/home/find-devices">
                             <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
                                 Get Started
                             </button>

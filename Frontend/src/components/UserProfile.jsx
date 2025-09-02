@@ -6,24 +6,10 @@ import { useNavigate } from "react-router-dom";
 const UserProfile = ({
   username ,
   role,
+  onLogout,
   onClose
 }) => {
   const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await fetch("http://localhost:5000/api/auth/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
-      });
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-    Cookies.remove("accessToken");
-    if (onClose) onClose();
-    navigate("/");
-  };
 
   return (
     <aside className="fixed top-0 right-0 h-full w-[320px] bg-gradient-to-b from-cyan-500 via-blue-500 to-cyan-400 shadow-2xl flex flex-col items-center py-10 z-[100] transition-transform duration-500">
@@ -50,7 +36,7 @@ const UserProfile = ({
       <div className="w-full flex flex-col items-center mt-auto mb-10">
         <button
           type="button"
-          onClick={handleLogout}
+          onClick={onLogout}
           className="px-8 py-3 bg-red-500 hover:bg-red-700 text-white rounded-lg font-semibold shadow transition duration-200 text-lg cursor-pointer"
           style={{ cursor: "pointer" }}
         >

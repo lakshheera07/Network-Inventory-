@@ -9,9 +9,10 @@ import Map from "../Pages/Map/Map";
 import Home from "../Pages/HomePage/Home";
 import FindDevice from "../Pages/FindDevices/FindDevice";
 import AboutUs from "../Pages/AboutUs/AboutUs";
-import Login from "../Pages/Login/Login";
-import Register from "../Pages/Login/Register";
 import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard";
+import Login from "../Pages/Auth/Login";
+import RequestAccess from "../Pages/Auth/RequestAccess";
+import LoginLayout from "../layouts/LoginLayout";
 
 const AppRoutes = () => {
   const [devices, setDevices] = useState([]);
@@ -19,8 +20,12 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/" element={<LoginLayout />}>
+        <Route index element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/request-access" element={<RequestAccess />} />
+      </Route>
+      {/* <Route path="/register" element={<Register />} /> */}
 
       {/* Protected routes under MainLayout */}
       <Route path="/home" element={<MainLayout />}>

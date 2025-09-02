@@ -29,7 +29,7 @@ const DeleteDevice = () => {
         setDevices(devices.filter((d) => d._id !== selectedId));
         setTimeout(() => {
           setToast(null);
-          navigate("/inventory");
+          navigate("/home/inventory");
         }, 2000);
       } else {
         setToast("❌ Failed to delete device.");

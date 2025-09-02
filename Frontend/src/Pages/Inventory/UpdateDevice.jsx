@@ -118,7 +118,7 @@ export default function UpdateDevice() {
         setToast("✅ Device updated successfully!");
         setTimeout(() => {
           setToast(null);
-          navigate("/inventory");
+          navigate("/home/inventory");
         }, 2000);
       } else {
         if (data.errors) {

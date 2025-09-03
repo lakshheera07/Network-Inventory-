@@ -41,11 +41,8 @@ export const addDevice = async (req, res) => {
     if (await Device.findOne({ ip, isDeleted: false })) {
       errors.ip = `IP "${ip}" already exists`;
     }
-    if (typeof mac === "string" && mac.trim() !== "") {
-      const existingMac = await Device.findOne({ mac, isDeleted: false });
-      if (existingMac) {
-        errors.mac = `MAC "${mac}" already exists`;
-      }
+    if (mac && await Device.findOne({ mac, isDeleted: false })) {
+      errors.mac = `MAC "${mac}" already exists`;
     }
     if (serialNumber && await Device.findOne({ serialNumber, isDeleted: false })) {
       errors.serialNumber = `Serial number "${serialNumber}" already exists`;
@@ -117,11 +114,8 @@ export const updateDevice = async (req, res) => {
     if (ip && await Device.findOne({ ip, _id: { $ne: id }, isDeleted: false })) {
       errors.ip = `IP "${ip}" already exists`;
     }
-    if (typeof mac === "string" && mac.trim() !== "") {
-      const existingMac = await Device.findOne({ mac, _id: { $ne: id }, isDeleted: false });
-      if (existingMac) {
-        errors.mac = `MAC "${mac}" already exists`;
-      }
+    if (mac && await Device.findOne({ mac, _id: { $ne: id }, isDeleted: false })) {
+      errors.mac = `MAC "${mac}" already exists`;
     }
     if (serialNumber && await Device.findOne({ serialNumber, _id: { $ne: id }, isDeleted: false })) {
       errors.serialNumber = `Serial number "${serialNumber}" already exists`;

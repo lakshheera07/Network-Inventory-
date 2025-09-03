@@ -27,7 +27,7 @@ export default function DeletedDevices() {
         setToast("✅ Device restored successfully!");
         setTimeout(() => {
           setToast(null);
-          navigate("/find-devices");
+          navigate("/home/find-devices");
         }, 2000);
       } else {
         setToast("❌ Failed to restore device.");
@@ -48,24 +48,46 @@ export default function DeletedDevices() {
       <div className="p-6 mt-20 max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl">
         <h1 className="text-2xl font-bold mb-6 text-center">🗃️ Archived Devices</h1>
         {deletedDevices.length === 0 ? (
-          <p className="text-center text-gray-500">No deleted devices found.</p>
-        ) : (
-          <ul className="divide-y">
-            {deletedDevices.map((device) => (
-              <li key={device._id} className="py-4 flex justify-between items-center">
-                <div>
-                  <div className="font-bold text-lg text-red-600">{device.componentName}</div>
-                  <div className="text-sm text-gray-500">{device.ip} • {device.location}</div>
+            <>
+                <p className="text-center text-gray-500">No deleted devices found.</p>
+                <div className="flex justify-center mt-6">
+                            <button
+                                onClick={() => navigate("/home/find-devices")}
+                                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-700 transition"
+                            >
+                                ⬅️ Back to Find Devices
+                            </button>
                 </div>
-                <button
-                  onClick={() => handleRestore(device._id)}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                >
-                  <RotateCcw className="w-5 h-5" /> Restore
-                </button>
-              </li>
-            ))}
-          </ul>
+            </>
+        ) : (
+            <>
+                <ul className="divide-y">
+                    {deletedDevices.map((device) => (
+                    <li key={device._id} className="py-4 flex justify-between items-center">
+                        <div>
+                        <div className="font-bold text-lg text-red-600">{device.componentName}</div>
+                        <div className="text-sm text-gray-500">{device.ip} • {device.location}</div>
+                        </div>
+                        <button
+                        onClick={() => handleRestore(device._id)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                        >
+                        <RotateCcw className="w-5 h-5" /> Restore
+                        </button>
+                    </li>
+                    ))}
+                </ul>
+                
+                <div className="flex justify-center mt-6">
+                    <button
+                        onClick={() => navigate("/home/find-devices")}
+                        className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-700 transition"
+                    >
+                        ⬅️ Back to Find Devices
+                    </button>
+                </div>
+
+            </> 
         )}
       </div>
     </>

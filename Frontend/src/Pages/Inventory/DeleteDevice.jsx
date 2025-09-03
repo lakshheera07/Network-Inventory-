@@ -8,11 +8,10 @@ const DeleteDevice = () => {
 
   const navigate = useNavigate();
 
-  // Fetch devices from backend
   useEffect(() => {
     fetch("http://localhost:5000/api/devices")
       .then((res) => res.json())
-      .then((data) => setDevices(data))
+      .then((data) => setDevices(data.filter((d) => !d.isDeleted)))
       .catch((err) => console.error("Error fetching devices:", err));
   }, []);
 
@@ -20,12 +19,15 @@ const DeleteDevice = () => {
     if (!selectedId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/devices/${selectedId}`, {
-        method: "DELETE",
+      const response = await fetch(`http://localhost:5000/api/devices/${selectedId}/soft-delete`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isDeleted: true }),
       });
 
       if (response.ok) {
-        setToast("🗑️ Device deleted successfully!");
+        
+        setToast("🗑️ Device soft-deleted successfully!");
         setDevices(devices.filter((d) => d._id !== selectedId));
         setTimeout(() => {
           setToast(null);

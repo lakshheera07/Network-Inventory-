@@ -5,13 +5,28 @@ const RequestAccess = () => {
   const [username, setUsername] = useState('');
   const [requestMessage, setRequestMessage] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    const usernameRegex = /^.{3,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+    if (!usernameRegex.test(username)) {
+      alert("Username must be at least 3 characters long.");
+      return false;
+    }
+    if (!passwordRegex.test(password)) {
+      alert("Password must be at least 8 characters, include 1 uppercase, 1 lowercase, and 1 special character.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     try {
       const res = await fetch("http://localhost:5000/api/auth/request-access", {
         method: "POST",

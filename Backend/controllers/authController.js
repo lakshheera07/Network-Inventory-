@@ -6,32 +6,6 @@ import Request from "../models/Request.model.js";
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "your_jwt_refresh_secret";
 
-const register = async (req, res) => {
-  try {
-    const { fullname, username, password, role } = req.body;
-
-    // Check if username already exists
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ error: "Username already exists" });
-    }
-
-    // Create new user
-    const user = new User({
-      fullname,
-      username,
-      password,
-      role: role || "user",
-    });
-
-    await user.save();
-    res.status(201).json({ message: "User registered successfully", user });
-  } catch (error) {
-    res.status(500).json({ error: "Server error" });
-    console.error(error);
-  }
-};
-
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -88,14 +62,14 @@ const logout = async (req, res) => {
 
 const requestAccess = async (req, res) => {
   try {
-    const { username, password, requestMessage, requestedRole } = req.body;
+    const { username, password, requestMessage, role } = req.body;
 
     // Create a new access request
     const request = new Request({
       username,
       password,
       requestMessage,
-      requestedRole,
+      requestedRole: role,
     });
 
     await request.save();
@@ -117,4 +91,14 @@ const requestedUsers = async (req, res) => {
   }
 };
 
-export { register, login, logout, requestedUsers };
+const getUsers = async(req,res) =>{
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "can't fetch users" });
+    console.error(error);
+  }
+}
+
+export { login, logout, requestedUsers , requestAccess , getUsers };

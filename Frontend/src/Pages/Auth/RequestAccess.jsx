@@ -31,7 +31,7 @@ const RequestAccess = () => {
       const res = await fetch("http://localhost:5000/api/auth/request-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, requestMessage, password, role, status: 'pending' }),
+        body: JSON.stringify({ username, requestMessage, password, requestedRole:role, status: 'pending' }),
       });
       const data = await res.json();
       if (res.ok) {

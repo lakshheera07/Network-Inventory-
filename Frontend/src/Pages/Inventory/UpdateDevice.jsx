@@ -33,8 +33,22 @@ export default function UpdateDevice() {
     setSelectedId(id);
     const device = devices.find((d) => d._id === id);
     if (device) {
+      const blankForm = {
+            componentName: "",
+            ip: "",
+            mac: "",
+            type: "",
+            category: "",
+            location: "",
+            latitude: "",
+            longitude: "",
+            status: "",
+            manufacturer: "",
+            serialNumber: "",
+          };
+
       setOriginalDevice(device);
-      setForm({ ...device });
+      setForm({ ...blankForm, ...device });
       setErrors({});
     }
   };

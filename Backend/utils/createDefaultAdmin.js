@@ -12,15 +12,15 @@ const createDefaultNetworkAdmin = async () => {
     useUnifiedTopology: true,
   });
 
-  const existingAdmin = await User.findOne({ username: "lakshheera18" });
+  const existingAdmin = await User.findOne({ username: "meghats" });
   if (existingAdmin) {
     console.log("Default networkAdmin already exists.");
     return;
   }
 
   const admin = new User({
-    username: "lakshheera18",
-    password: "Laksh@25.09",
+    username: "meghats",
+    password: "Megha@123", // In a real-world scenario, ensure to hash the password
     role: "networkAdmin",
   });
 

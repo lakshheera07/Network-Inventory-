@@ -1,5 +1,23 @@
 import mongoose from "mongoose";
-
+const auditEntrySchema = new mongoose.Schema({
+  action: {
+    type: String,
+    enum: ["CREATED", "UPDATED", "SOFT_DELETED", "RESTORED"],
+    required: true,
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
+  userId: {
+    type: String,
+    required: true,
+  },
+  notes: String,
+  changes: {
+    type: Object,
+  },
+});
 const deviceSchema = new mongoose.Schema({
   componentName: {
     type: String,
@@ -19,8 +37,6 @@ const deviceSchema = new mongoose.Schema({
   },
   mac: {
     type: String,
-    required: [true, "MAC address is required"],
-    unique: true,
     match: [
       /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/,
       "Please provide a valid MAC address",
@@ -28,29 +44,21 @@ const deviceSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: [true, "Device type is required"],
-    enum: {
-      values: ["Physical", "Virtual"],
-      message: "{VALUE} is not a valid device type",
-    },
+    enum: ["Physical", "Virtual", "Unknown"],
   },
   category: {
     type: String,
-    required: [true, "Category is required"],
-    enum: {
-      values: ["Router", "Firewall", "Server", "Switch"],
-      message: "{VALUE} is not a valid category",
-    },
+    enum: [
+      "ethernetCsmacd", "loopback", "wifi", "tunnel", "l2vlan", "Unknown"
+    ],
   },
   location: {
     type: String,
-    required: [true, "Location is required"],
     trim: true,
     maxlength: [200, "Location cannot exceed 200 characters"],
   },
   latitude: {
     type: String,
-    required: [true, "Latitude is required"],
     match: [
       /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/,
       "Please provide a valid latitude",
@@ -58,7 +66,6 @@ const deviceSchema = new mongoose.Schema({
   },
   longitude: {
     type: String,
-    required: [true, "Longitude is required"],
     match: [
       /^[-+]?((1[0-7]\d)|(\d{1,2}))(\.\d+)?|180(\.0+)?$/,
       "Please provide a valid longitude",
@@ -66,24 +73,24 @@ const deviceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: [true, "Status is required"],
-    enum: {
-      values: ["Active", "Inactive"],
-      message: "{VALUE} is not a valid status",
-    },
-    default: "Active",
+    enum: [
+      "up", "down", "testing", "unknown", "dormant", "notPresent", "lowerLayerDown"
+    ],
+    default: "up",
   },
   manufacturer: {
     type: String,
-    required: [true, "Manufacturer is required"],
-    trim: true
+    trim: true,
   },
   serialNumber: {
     type: String,
-    required: [true, "Serial number is required"],
-    unique: true,
-    trim: true
+    trim: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  auditTrail: [auditEntrySchema],
 }, { timestamps: true });
 
 const Device = mongoose.model("Device", deviceSchema);

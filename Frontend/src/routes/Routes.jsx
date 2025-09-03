@@ -13,6 +13,8 @@ import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard";
 import Login from "../Pages/Auth/Login";
 import RequestAccess from "../Pages/Auth/RequestAccess";
 import LoginLayout from "../layouts/LoginLayout";
+import DeletedDevices from "../Pages/Inventory/DeletedDevices";
+
 
 const AppRoutes = () => {
   const [devices, setDevices] = useState([]);
@@ -39,6 +41,7 @@ const AppRoutes = () => {
       <Route path="inventory/delete" element={<DeleteDevice />} />
       <Route path="map" element={<Map />} />
       <Route path="find-devices" element={<FindDevice />} />
+      <Route path="inventory/deleted" element={<DeletedDevices />} />
       <Route path="about-us" element={<AboutUs />} />
       <Route path="admin" element={<AdminDashboard />} />
       </Route>

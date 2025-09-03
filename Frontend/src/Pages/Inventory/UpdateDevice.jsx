@@ -6,36 +6,23 @@ export default function UpdateDevice() {
   const [devices, setDevices] = useState([]);
   const [selectedId, setSelectedId] = useState("");
   const [form, setForm] = useState(null);
+  const [originalDevice, setOriginalDevice] = useState(null);
   const [errors, setErrors] = useState({});
   const [toast, setToast] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch devices
   useEffect(() => {
     fetch("http://localhost:5000/api/devices")
       .then((res) => res.json())
       .then((data) => {
         setDevices(data);
-
-        // If coming from FindDevices with state
         if (location.state?.device) {
           const device = location.state.device;
           setSelectedId(device._id);
-          setForm({
-            componentName: device.componentName,
-            ip: device.ip,
-            mac: device.mac,
-            type: device.type,
-            location: device.location || "",
-            status: device.status,
-            manufacturer: device.manufacturer || "",
-            serialNumber: device.serialNumber || "",
-            category: device.category || "",
-            latitude: device.latitude || "",
-            longitude: device.longitude || "",
-          });
+          setOriginalDevice(device);
+          setForm({ ...device });
         }
       })
       .catch((err) => console.error("Error fetching devices:", err));
@@ -45,21 +32,9 @@ export default function UpdateDevice() {
     const id = e.target.value;
     setSelectedId(id);
     const device = devices.find((d) => d._id === id);
-
     if (device) {
-      setForm({
-        componentName: device.componentName,
-        ip: device.ip,
-        mac: device.mac,
-        type: device.type,
-        location: device.location || "",
-        status: device.status,
-        manufacturer: device.manufacturer || "",
-        serialNumber: device.serialNumber || "",
-        category: device.category || "",
-        latitude: device.latitude || "",
-        longitude: device.longitude || "",
-      });
+      setOriginalDevice(device);
+      setForm({ ...device });
       setErrors({});
     }
   };
@@ -71,39 +46,39 @@ export default function UpdateDevice() {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.componentName.trim())
-      newErrors.componentName = "Component name is required";
+    if (!form.componentName?.trim()) newErrors.componentName = "Component name is required";
     if (
-      !/^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(
-        form.ip
-      )
-    )
-      newErrors.ip = "Invalid IP Address";
-    if (!/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(form.mac))
-      newErrors.mac = "Invalid MAC Address";
-    if (!["Physical", "Virtual"].includes(form.type))
-      newErrors.type = "Type must be Physical or Virtual";
-    if (!form.location.trim())
-      newErrors.location = "Location is required";
-    if (!["Active", "Inactive"].includes(form.status))
-      newErrors.status = "Status must be Active or Inactive";
-    if (!form.manufacturer.trim())
-      newErrors.manufacturer = "Manufacturer is required";
-    if (!form.serialNumber.trim())
-      newErrors.serialNumber = "Serial number is required";
-    if (!["Router", "Firewall", "Server", "Switch"].includes(form.category))
-      newErrors.category = "Category must be one of Router, Firewall, Server, Switch";
-    if (!/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/.test(form.latitude))
-      newErrors.latitude = "Invalid latitude";
-    if (!/^[-+]?((1[0-7]\d)|(\d{1,2}))(\.\d+)?|180(\.0+)?$/.test(form.longitude))
-      newErrors.longitude = "Invalid longitude";
+      !/^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(form.ip)
+    ) newErrors.ip = "Invalid IP Address";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const getAuditChanges = () => {
+    const changes = {};
+    Object.keys(form).forEach((key) => {
+      if (form[key] !== originalDevice[key]) {
+        changes[key] = {
+          from: originalDevice[key],
+          to: form[key],
+        };
+      }
+    });
+    return changes;
+  };
+
   const handleSubmit = async () => {
     if (!validate()) return;
+
+    const changes = getAuditChanges();
+
+    // ✅ Skip update if no changes
+    if (Object.keys(changes).length === 0) {
+      setToast("ℹ️ No changes detected.");
+      setTimeout(() => setToast(null), 2000);
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:5000/api/devices/${selectedId}`, {
@@ -122,6 +97,8 @@ export default function UpdateDevice() {
         }, 2000);
       } else {
         if (data.errors) {
+          const errorMessages = Object.values(data.errors).join(", ");
+          setToast("❌ " + errorMessages);
           setErrors(data.errors);
         } else {
           setToast("❌ " + (data.error || "Failed to update device."));
@@ -132,7 +109,7 @@ export default function UpdateDevice() {
       setToast("❌ Server error.");
     }
   };
-
+  
   return (
     <>
       {toast && (
@@ -162,6 +139,7 @@ export default function UpdateDevice() {
             handleSubmit={handleSubmit}
             buttonLabel="Update Device"
             updateMode={true}
+            disableFields={["componentName", "ip"]}
           />
         )}
       </div>

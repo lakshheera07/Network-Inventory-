@@ -13,7 +13,8 @@ const login = async (req, res) => {
     // Find user by username
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      
+      return res.status(401).json({ error: "Invalid username" });
     }
 
     // Compare password using bcrypt

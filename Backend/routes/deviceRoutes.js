@@ -12,15 +12,17 @@ import {
   getAuditTrail,
 } from "../controllers/deviceController.js";
 import { scanNetwork } from "../scanner.mjs";
+import { authenticateToken } from "../middleware/authMiddleware.js";
+import roleCheckMiddleware from "../middleware/roleCheckMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", getDevices);
-router.post("/", addDevice);
-router.put("/:id", updateDevice);
-router.delete("/:id", deleteDevice);
-router.get("/search", searchDevices);
-router.get("/scan", async (req, res) => {
+router.get("/", authenticateToken, roleCheckMiddleware(["user", "admin", "networkAdmin"]), getDevices);
+router.post("/", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), addDevice);
+router.put("/:id", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), updateDevice);
+router.delete("/:id", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), deleteDevice);
+router.get("/search", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), searchDevices);
+router.get("/scan", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), async (req, res) => {
   try {
     const result = await scanNetwork();
     res.json(result.responders);
@@ -30,10 +32,10 @@ router.get("/scan", async (req, res) => {
 });
 
 // New routes
-router.get("/deleted", getDeletedDevices);
-router.put("/:id/soft-delete", softDeleteDevice);
-router.put("/restore/:id", restoreDevice);
-router.post("/:id/audit-trail", logAuditTrail);
-router.get("/:id/audit-trail", getAuditTrail);
+router.get("/deleted", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), getDeletedDevices);
+router.put("/:id/soft-delete", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), softDeleteDevice);
+router.put("/restore/:id", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), restoreDevice);
+router.post("/:id/audit-trail", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), logAuditTrail);
+router.get("/:id/audit-trail", authenticateToken, roleCheckMiddleware(["admin", "networkAdmin"]), getAuditTrail);
 
 export default router;

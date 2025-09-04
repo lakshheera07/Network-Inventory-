@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import Toast from "../../components/toast";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const AddDevice = () => {
   const [scannedDevices, setScannedDevices] = useState([]);
@@ -11,17 +13,22 @@ const AddDevice = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const navigate = useNavigate();
+  const token = Cookies.get("accessToken")
 
   const handleScan = async () => {
     setScanning(true);
     setScannedDevices([]);
     setHasScanned(true);
     try {
-      const res = await fetch("http://localhost:5000/api/devices/scan");
+      const res = await fetch("http://localhost:5000/api/devices/scan", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setScannedDevices(data);
     } catch (err) {
-      setToast("❌ Scan failed.");
+      setToast({ message: "Scan failed.", color: "red" });
     }
     setScanning(false);
   };
@@ -36,26 +43,32 @@ const AddDevice = () => {
       category: device.interfaceType || "Unknown",
       status: device.operStatus || "Unknown",
       serialNumber: device.objectID || "",
+      latitude: 12.9,
+      longitude: 77.6,
+ 
     };
 
     try {
       const res = await fetch("http://localhost:5000/api/devices", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
       if (res.ok) {
-        setToast(`✅ Added ${payload.componentName}`);
+        setToast({ message: `Added ${payload.componentName}`, color: "green" });
       } else {
         const errorMessages = data.errors
           ? Object.values(data.errors).join(", ")
           : data.error || "Unknown error";
-        setToast(`❌ Failed to add ${payload.componentName}: ${errorMessages}`);
+        setToast({ message: `Failed to add ${payload.componentName}: ${errorMessages}`, color: "red" });
       }
     } catch (err) {
-      setToast("❌ Server error while adding device.");
+      setToast({ message: "Server error while adding device.", color: "red" });
     }
   };
 
@@ -73,12 +86,18 @@ const AddDevice = () => {
         category: device.interfaceType || "Unknown",
         status: device.operStatus || "Unknown",
         serialNumber: device.objectID || "",
+        latitude: 12.9,
+        longitude: 77.6,
+ 
         };
       
       try {
         const res = await fetch("http://localhost:5000/api/devices", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
           body: JSON.stringify(payload),
         });
 
@@ -99,7 +118,7 @@ const AddDevice = () => {
       }
     }
 
-    setToast(`✅ ${successCount} added, ❌ ${failed.length} failed`);
+  setToast({ message: `${successCount} added, ${failed.length} failed`, color: failed.length === 0 ? "green" : "red" });
     setFailedDevices(failed);
     if (failed.length > 0) setShowErrorModal(true);
 
@@ -117,13 +136,15 @@ const AddDevice = () => {
     <div className="min-h-screen flex justify-center items-start pt-16 pb-16">
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-6 mt-20">
         <h2 className="text-3xl font-bold text-center mb-8">Add Devices</h2>
-        <button
-          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          onClick={handleScan}
-          disabled={scanning}
-        >
-          {scanning ? "Scanning..." : "Scan Devices"}
-        </button>
+        <div className="flex justify-center">
+          <button
+            className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            onClick={handleScan}
+            disabled={scanning}
+          >
+            {scanning ? "Scanning..." : "Scan Devices"}
+          </button>
+        </div>
 
         {hasScanned && scannedDevices.length === 0 && !scanning && (
           <p className="text-center text-gray-500 mt-4">No devices found.</p>
@@ -180,9 +201,12 @@ const AddDevice = () => {
       </div>
 
       {toast && (
-        <div className="fixed bottom-6 left-6 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-slide-in">
-          {toast}
-        </div>
+        <Toast
+          message={toast.message}
+          color={toast.color}
+          duration={2500}
+          onClose={() => setToast(null)}
+        />
       )}
 
       {showErrorModal && (

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import Toast from "../../components/toast";
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -23,15 +25,23 @@ const Login = () => {
         Cookies.set("role", data.user.role, { expires: 1 });
         navigate("/home");
       } else {
-        alert(data.error || "Login failed");
+        setToast({ message: data.error || "Login failed", color: "red" });
       }
     } catch (err) {
-      alert("Server error");
+      setToast({ message: "Server error", color: "red" });
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      {toast && (
+        <Toast
+          message={toast.message}
+          color={toast.color}
+          duration={2500}
+          onClose={() => setToast(null)}
+        />
+      )}
       <div className="bg-white rounded-2xl shadow-lg border border-blue-400 p-10 text-center max-w-sm w-full animate-fadeIn">
         <h2 className="text-blue-700 text-2xl font-semibold mb-4">Login</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import Toast from "../../components/toast";
 import { useNavigate } from 'react-router-dom';
 
 const RequestAccess = () => {
   const [username, setUsername] = useState('');
   const [requestMessage, setRequestMessage] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState('user');
   const [submitted, setSubmitted] = useState(false);
+  const [toast, setToast] = useState(null);
 
   const navigate = useNavigate();
 
@@ -14,11 +16,11 @@ const RequestAccess = () => {
     const usernameRegex = /^.{3,}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
     if (!usernameRegex.test(username)) {
-      alert("Username must be at least 3 characters long.");
+      setToast({ message: "Username must be at least 3 characters long.", color: "red" });
       return false;
     }
     if (!passwordRegex.test(password)) {
-      alert("Password must be at least 8 characters, include 1 uppercase, 1 lowercase, and 1 special character.");
+      setToast({ message: "Password must be at least 8 characters, include 1 uppercase, 1 lowercase, and 1 special character.", color: "red" });
       return false;
     }
     return true;
@@ -36,19 +38,29 @@ const RequestAccess = () => {
       const data = await res.json();
       if (res.ok) {
         setSubmitted(true);
+        setToast({ message: "Request sent to Network Admin", color: "green" });
         setTimeout(() => {
+          setToast(null);
           navigate('/');
         }, 1500);
       } else {
-        alert(data.error || "Request failed");
+        setToast({ message: data.error || "Request failed", color: "red" });
       }
     } catch (err) {
-      alert("Access error");
+      setToast({ message: "Access error", color: "red" });
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      {toast && (
+        <Toast
+          message={toast.message}
+          color={toast.color}
+          duration={2500}
+          onClose={() => setToast(null)}
+        />
+      )}
       <div className="bg-white rounded-2xl shadow-lg border border-blue-400 p-10 text-center max-w-md w-full animate-fadeIn">
         <h2 className="text-blue-700 text-2xl font-semibold mb-2">Request Network Access</h2>
         {submitted ? (

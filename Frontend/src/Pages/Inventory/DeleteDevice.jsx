@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const DeleteDevice = () => {
   const [devices, setDevices] = useState([]);
@@ -7,9 +8,14 @@ const DeleteDevice = () => {
   const [toast, setToast] = useState(null);
 
   const navigate = useNavigate();
+  const token = Cookies.get("accessToken");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/devices")
+    fetch("http://localhost:5000/api/devices", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
       .then((res) => res.json())
       .then((data) => setDevices(data.filter((d) => !d.isDeleted)))
       .catch((err) => console.error("Error fetching devices:", err));
@@ -21,7 +27,10 @@ const DeleteDevice = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/devices/${selectedId}/soft-delete`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ isDeleted: true }),
       });
 

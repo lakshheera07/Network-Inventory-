@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import Toast from "../../components/toast";
 // import dummyUsers from "../../data/dummyUsers";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]); // Now fetch from backend
+  const [toast, setToast] = useState(null);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState({ name: "", username: "" });
   const [requests, setRequests] = useState([]);
@@ -33,21 +35,6 @@ const AdminDashboard = () => {
       .catch(() => setUsers([]));
   };
 
-  const handleRoleChange = (index, newRole) => {
-    const updatedUsers = [...users];
-    updatedUsers[index].role = newRole;
-    setUsers(updatedUsers);
-  };
-  const handleEdit = (index) => {
-    setEditIdx(index);
-    setEditForm({ name: users[index].name, username: users[index].username });
-  };
-
-  const handleEditChange = (e) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  };
-
-
   const handleRemove = (index) => {
     const user = users[index];
     fetch("http://localhost:5000/api/network-admin/deleteUser", {
@@ -57,7 +44,7 @@ const AdminDashboard = () => {
     })
       .then(res => res.json())
       .then(data => {
-        alert(data.message || `User ${user.username} removed`);
+        setToast({ message: data.message || `User ${user.username} removed`, color: data.success ? "green" : "red" });
         reloadData();
         setEditIdx(null);
       });
@@ -74,7 +61,7 @@ const AdminDashboard = () => {
     })
       .then(res => res.json())
       .then(data => {
-        alert(data.message || `Role updated for ${user.username}`);
+        setToast({ message: data.message || `Role updated for ${user.username}`, color: data.success ? "green" : "red" });
         reloadData();
         setEditIdx(null);
       });
@@ -92,7 +79,7 @@ const AdminDashboard = () => {
     })
       .then(res => res.json())
       .then(data => {
-        alert(`User ${data.user.username} registered successfully`);
+        setToast({ message: `User ${data.user.username} registered successfully`, color: "green" });
         reloadData();
       });
   };
@@ -103,13 +90,21 @@ const AdminDashboard = () => {
     })
       .then(res => res.json())
       .then(data => {
-        alert(`Rejected request ${id}`);
+        setToast({ message: `Rejected request ${id}`, color: "red" });
         reloadData();
       });
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4">
+      {toast && (
+        <Toast
+          message={toast.message}
+          color={toast.color}
+          duration={2500}
+          onClose={() => setToast(null)}
+        />
+      )}
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Active Users</h1>
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl p-8">
         <table className="w-full table-auto border-collapse">

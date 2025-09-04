@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw } from "lucide-react";
+import Cookies from "js-cookie";
 
 export default function DeletedDevices() {
   const [deletedDevices, setDeletedDevices] = useState([]);
   const [toast, setToast] = useState(null);
   const navigate = useNavigate();
+  const token = Cookies.get("accessToken");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/devices/deleted")
+    fetch("http://localhost:5000/api/devices/deleted", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
       .then((res) => res.json())
       .then((data) => setDeletedDevices(data))
       .catch((err) => console.error("Error fetching deleted devices:", err));
@@ -18,7 +24,10 @@ export default function DeletedDevices() {
     try {
       const res = await fetch(`http://localhost:5000/api/devices/restore/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
       });
 
       if (res.ok) {

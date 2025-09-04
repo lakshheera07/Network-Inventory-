@@ -63,14 +63,14 @@ const logout = async (req, res) => {
 
 const requestAccess = async (req, res) => {
   try {
-    const { username, password, requestMessage, role } = req.body;
+    const { username, password, requestMessage, requestedRole } = req.body;
 
     // Create a new access request
     const request = new Request({
       username,
       password,
       requestMessage,
-      requestedRole: role,
+      requestedRole,
     });
 
     await request.save();

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DeviceForm from "../../components/DeviceForm";
 import { useNavigate, useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export default function UpdateDevice() {
   const [devices, setDevices] = useState([]);
@@ -12,9 +13,14 @@ export default function UpdateDevice() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const token = Cookies.get("accessToken");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/devices")
+    fetch("http://localhost:5000/api/devices", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setDevices(data);
@@ -34,18 +40,18 @@ export default function UpdateDevice() {
     const device = devices.find((d) => d._id === id);
     if (device) {
       const blankForm = {
-            componentName: "",
-            ip: "",
-            mac: "",
-            type: "",
-            category: "",
-            location: "",
-            latitude: "",
-            longitude: "",
-            status: "",
-            manufacturer: "",
-            serialNumber: "",
-          };
+        componentName: "",
+        ip: "",
+        mac: "",
+        type: "",
+        category: "",
+        location: "",
+        latitude: "",
+        longitude: "",
+        status: "",
+        manufacturer: "",
+        serialNumber: "",
+      };
 
       setOriginalDevice(device);
       setForm({ ...blankForm, ...device });
@@ -60,10 +66,14 @@ export default function UpdateDevice() {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.componentName?.trim()) newErrors.componentName = "Component name is required";
+    if (!form.componentName?.trim())
+      newErrors.componentName = "Component name is required";
     if (
-      !/^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(form.ip)
-    ) newErrors.ip = "Invalid IP Address";
+      !/^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/.test(
+        form.ip
+      )
+    )
+      newErrors.ip = "Invalid IP Address";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -95,11 +105,17 @@ export default function UpdateDevice() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/devices/${selectedId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/devices/${selectedId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
       const data = await response.json();
 
@@ -123,7 +139,7 @@ export default function UpdateDevice() {
       setToast("❌ Server error.");
     }
   };
-  
+
   return (
     <>
       {toast && (

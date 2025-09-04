@@ -4,6 +4,7 @@ import Tree from "rc-tree";
 import "rc-tree/assets/index.css";
 import { Pencil, Trash2, History, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const API_BASE = "http://localhost:5000/api/devices";
 
@@ -19,6 +20,8 @@ export default function FindDevice() {
   const [showAuditModal, setShowAuditModal] = useState(false);
 
   const navigate = useNavigate();
+  const token = Cookies.get("accessToken");
+  const role = Cookies.get("role");
 
   useEffect(() => {
     fetchDevices();
@@ -26,7 +29,11 @@ export default function FindDevice() {
 
   const fetchDevices = async () => {
     try {
-      const res = await axios.get(API_BASE);
+      const res = await axios.get(API_BASE, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       setDevices(res.data.filter((d) => !d.isDeleted));
     } catch (err) {
       console.error("Error fetching devices:", err);
@@ -36,7 +43,11 @@ export default function FindDevice() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this device?")) return;
     try {
-      await axios.put(`${API_BASE}/${id}/soft-delete`, { isDeleted: true });
+      await axios.put(`${API_BASE}/${id}/soft-delete`, { isDeleted: true }, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       fetchDevices();
       setSelectedDevice(null);
     } catch (err) {
@@ -47,7 +58,11 @@ export default function FindDevice() {
   const fetchAuditTrail = async (id) => {
     setLoadingAudit(true);
     try {
-      const res = await axios.get(`${API_BASE}/${id}/audit-trail`);
+      const res = await axios.get(`${API_BASE}/${id}/audit-trail`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       setAuditTrail(res.data);
     } catch (err) {
       console.error("Error fetching audit trail:", err);
@@ -144,7 +159,8 @@ export default function FindDevice() {
         {/* Deleted Devices Icon */}
         <button
           onClick={() => navigate("/home/inventory/deleted")}
-          className="absolute right-4 top-4 flex items-center gap-2 text-red-600 hover:text-red-800"
+          className={`absolute right-4 top-4 flex items-center gap-2 text-red-600 hover:text-red-800 ${role === "user" ? "opacity-50 cursor-not-allowed" : ""}`}
+          disabled={role === "user"}
         >
           <Trash className="w-5 h-5" /> Deleted Devices
         </button>
@@ -172,19 +188,22 @@ export default function FindDevice() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => navigate("/home/inventory/update", { state: { device: selectedDevice } })}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100 transition"
+                    className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100 transition ${role === "user" ? "opacity-50 cursor-not-allowed" : ""}`}
+                    disabled={role === "user"}
                   >
                     <Pencil className="w-5 h-5" /> Edit
                   </button>
                   <button
                     onClick={() => handleDelete(selectedDevice._id)}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100 transition"
+                    className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100 transition ${role === "user" ? "opacity-50 cursor-not-allowed" : ""}`}
+                    disabled={role === "user"}
                   >
                     <Trash2 className="w-5 h-5" /> Delete
                   </button>
                   <button
                     onClick={() => fetchAuditTrail(selectedDevice._id)}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-lg text-blue-700 hover:bg-blue-100 transition"
+                    className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-blue-700 hover:bg-blue-100 transition ${role === "user" ? "opacity-50 cursor-not-allowed" : ""}`}
+                    disabled={role === "user"}
                   >
                     <History className="w-5 h-5" /> View Audit Trail
                   </button>
@@ -237,7 +256,6 @@ export default function FindDevice() {
                 {auditTrail.map((entry, idx) => (
                   <li key={idx} className="border-b pb-2">
                     <div><strong>Action:</strong> {entry.action}</div>
-                    <div><strong>Changed By:</strong> {entry.userId}</div>
                     <div><strong>Timestamp:</strong> {new Date(entry.timestamp).toLocaleString()}</div>
                     {entry.notes && <div><strong>Notes:</strong> {entry.notes}</div>}
 

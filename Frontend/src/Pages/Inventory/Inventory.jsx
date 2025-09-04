@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Cookies from "js-cookie";
 import { Link } from 'react-router-dom';
  
 const actions = [
@@ -43,6 +44,7 @@ const actions = [
 const Inventory = () => {
   const [activeView, setActiveView] = useState(null);
   const [devices, setDevices] = useState([]);
+  const role = Cookies.get("role");
  
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4">
@@ -59,8 +61,10 @@ const Inventory = () => {
             <h2 className="text-2xl font-semibold text-white mb-2">{action.title}</h2>
             <p className="text-white text-center mb-6">{action.description}</p>
             <Link
-              to={action.path}
-              className="px-6 py-2 bg-white text-gray-900 font-bold rounded-lg shadow hover:bg-gray-200 transition"
+              to={role === "user" ? "#" : action.path}
+              className={`px-6 py-2 bg-white text-gray-900 font-bold rounded-lg shadow transition ${role === "user" ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-gray-200"}`}
+              tabIndex={role === "user" ? -1 : 0}
+              aria-disabled={role === "user"}
             >
               {action.title}
             </Link>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import NetworkScanner from "../../components/Scanner";
 import Toast from "../../components/toast";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -11,6 +12,7 @@ const AddDevice = () => {
   const [hasScanned, setHasScanned] = useState(false);
   const [failedDevices, setFailedDevices] = useState([]);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   const navigate = useNavigate();
   const token = Cookies.get("accessToken")
@@ -19,6 +21,7 @@ const AddDevice = () => {
     setScanning(true);
     setScannedDevices([]);
     setHasScanned(true);
+    setShowScanner(true);
     try {
       const res = await fetch("http://localhost:5000/api/devices/scan", {
         headers: {
@@ -27,8 +30,10 @@ const AddDevice = () => {
       });
       const data = await res.json();
       setScannedDevices(data);
+      setShowScanner(false);
     } catch (err) {
       setToast({ message: "Scan failed.", color: "red" });
+      setShowScanner(false);
     }
     setScanning(false);
   };
@@ -136,14 +141,20 @@ const AddDevice = () => {
     <div className="min-h-screen flex justify-center items-start pt-16 pb-16">
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-6 mt-20">
         <h2 className="text-3xl font-bold text-center mb-8">Add Devices</h2>
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center">
           <button
             className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
             onClick={handleScan}
             disabled={scanning}
+            style={{ minWidth: 160 }}
           >
-            {scanning ? "Scanning..." : "Scan Devices"}
+            Scan Devices
           </button>
+          {showScanner && (
+            <div className="mb-4">
+              <NetworkScanner />
+            </div>
+          )}
         </div>
 
         {hasScanned && scannedDevices.length === 0 && !scanning && (

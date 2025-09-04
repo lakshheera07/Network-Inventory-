@@ -44,9 +44,6 @@ export const addDevice = async (req, res) => {
     if (mac && await Device.findOne({ mac, isDeleted: false })) {
       errors.mac = `MAC "${mac}" already exists`;
     }
-    if (serialNumber && await Device.findOne({ serialNumber, isDeleted: false })) {
-      errors.serialNumber = `Serial number "${serialNumber}" already exists`;
-    }
 
     // If any errors, return them
     if (Object.keys(errors).length > 0) {
@@ -117,9 +114,7 @@ export const updateDevice = async (req, res) => {
     if (mac && await Device.findOne({ mac, _id: { $ne: id }, isDeleted: false })) {
       errors.mac = `MAC "${mac}" already exists`;
     }
-    if (serialNumber && await Device.findOne({ serialNumber, _id: { $ne: id }, isDeleted: false })) {
-      errors.serialNumber = `Serial number "${serialNumber}" already exists`;
-    }
+    
 
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ errors });

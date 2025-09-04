@@ -9,7 +9,7 @@ const LoginLayout = ({ children }) => {
   const isRequestAccess = location.pathname === '/request-access';
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-800 to-blue-400">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-600 to-blue-400">
       <header className="text-center py-10 px-4 bg-white/10 text-blue-100 shadow-md">
         <h1 className="text-4xl font-bold tracking-wide text-white mb-2">NetStore</h1>
         <p className="text-lg font-light">Empowering seamless network access and management for all users and admins.</p>

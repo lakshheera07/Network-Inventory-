@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { FaUserCircle } from 'react-icons/fa'
 import UserProfile from './UserProfile'
 import Cookies from "js-cookie";
-
+import logo from '../assests/image.png'
 const navLinks = [
   { name: "Home", to: "/home" },
   { name: "Inventory", to: "/home/inventory" },
@@ -32,8 +32,10 @@ const Navbar = () => {
     <>
       <div className='w-full h-24 bg-black text-white flex items-center justify-between shadow-lg px-4 sticky top-0 z-50'>
         <div className='flex items-center w-auto'>
+          <img src={logo} alt="Logo" className='h-12 w-12 mx-2 bg-transparent rounded-full'/>
           <span className='text-4xl font-bold mx-2'>NetStore</span>
-          <MdInventory size={44} color='red'/>
+          
+          {/* <MdInventory size={44} color='red'/> */}
         </div>
         <div>
           <ul className='flex'>

@@ -5,9 +5,9 @@ import "rc-tree/assets/index.css";
 import { Pencil, Trash2, History, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-
+ 
 const API_BASE = "http://localhost:5000/api/devices";
-
+ 
 export default function FindDevice() {
   const [devices, setDevices] = useState([]);
   const [search, setSearch] = useState("");
@@ -18,15 +18,15 @@ export default function FindDevice() {
   const [auditTrail, setAuditTrail] = useState([]);
   const [loadingAudit, setLoadingAudit] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
-
+ 
   const navigate = useNavigate();
   const token = Cookies.get("accessToken");
   const role = Cookies.get("role");
-
+ 
   useEffect(() => {
     fetchDevices();
   }, []);
-
+ 
   const fetchDevices = async () => {
     try {
       const res = await axios.get(API_BASE, {
@@ -39,7 +39,7 @@ export default function FindDevice() {
       console.error("Error fetching devices:", err);
     }
   };
-
+ 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this device?")) return;
     try {
@@ -54,7 +54,7 @@ export default function FindDevice() {
       console.error("Delete failed:", err);
     }
   };
-
+ 
   const fetchAuditTrail = async (id) => {
     setLoadingAudit(true);
     try {
@@ -71,7 +71,7 @@ export default function FindDevice() {
     setLoadingAudit(false);
     setShowAuditModal(true);
   };
-
+ 
   const renderDeviceRow = (d) => (
     <span
       className="cursor-pointer font-semibold text-gray-800 hover:underline"
@@ -80,10 +80,10 @@ export default function FindDevice() {
       {d.componentName}
     </span>
   );
-
+ 
   const buildTreeData = () => {
     const tree = {};
-
+ 
     devices.forEach((d) => {
       if (
         (search && !d.componentName.toLowerCase().includes(search.toLowerCase())) ||
@@ -91,20 +91,20 @@ export default function FindDevice() {
         (filterType && d.type !== filterType) ||
         (filterStatus && d.status !== filterStatus)
       ) return;
-
+ 
       const statusKey = d.status || "Unknown";
       const categoryKey = d.category || "Unknown";
       const typeKey = d.type || "Unknown";
-
+ 
       if (!tree[statusKey]) tree[statusKey] = {};
       if (!tree[statusKey][categoryKey]) tree[statusKey][categoryKey] = {};
       if (!tree[statusKey][categoryKey][typeKey]) tree[statusKey][categoryKey][typeKey] = [];
-
+ 
       tree[statusKey][categoryKey][typeKey].push(d);
     });
-
+ 
     return Object.entries(tree).map(([status, categoryGroup]) => ({
-      key: `status-${status}`, 
+      key: `status-${status}`,
       title: (<b className={`text-base ${
             status === "up"
               ? "text-green-600"
@@ -126,7 +126,26 @@ export default function FindDevice() {
       })),
     }));
   };
-
+ 
+  const [expandedKeys, setExpandedKeys] = useState([]);
+ 
+  useEffect(() => {
+    const allKeys = [];
+ 
+    const collectKeys = (nodes) => {
+      nodes.forEach((node) => {
+        allKeys.push(node.key);
+        if (node.children) {
+          collectKeys(node.children);
+        }
+      });
+    };
+ 
+    const treeData = buildTreeData();
+    collectKeys(treeData);
+    setExpandedKeys(allKeys);
+  }, [devices, search, filterCategory, filterType, filterStatus]);
+ 
   return (
     <div className="p-6 bg-gray-50 min-h-screen flex flex-col gap-4">
       {/* Top Filters/Search */}
@@ -155,7 +174,7 @@ export default function FindDevice() {
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
-
+ 
         {/* Deleted Devices Icon */}
         <button
           onClick={() => navigate("/home/inventory/deleted")}
@@ -165,20 +184,21 @@ export default function FindDevice() {
           <Trash className="w-5 h-5" /> Deleted Devices
         </button>
       </div>
-
+ 
       <div className="flex gap-6">
         {/* Left Panel: Tree */}
         <div className="w-1/3 bg-white shadow rounded-lg p-4">
           <Tree
             treeData={buildTreeData()}
-            defaultExpandAll
+            expandedKeys={expandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys)}
             selectable={false}
             showIcon={false}
             showLine={{ showLeafIcon: false }}
             className="text-base"
           />
         </div>
-
+ 
         {/* Right Panel: Details */}
         <div className="w-2/3 bg-white shadow rounded-lg p-6">
           {selectedDevice ? (
@@ -209,7 +229,7 @@ export default function FindDevice() {
                   </button>
                 </div>
               </div>
-
+ 
               <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-base">
                 {[
                   ["Name", selectedDevice.componentName],
@@ -240,13 +260,13 @@ export default function FindDevice() {
           )}
         </div>
       </div>
-
+ 
       {/* Audit Trail Modal */}
       {showAuditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full shadow-xl max-h-[80vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Audit Trail</h2>
-
+ 
             {loadingAudit ? (
               <p>Loading audit history...</p>
             ) : auditTrail.length === 0 ? (
@@ -258,7 +278,7 @@ export default function FindDevice() {
                     <div><strong>Action:</strong> {entry.action}</div>
                     <div><strong>Timestamp:</strong> {new Date(entry.timestamp).toLocaleString()}</div>
                     {entry.notes && <div><strong>Notes:</strong> {entry.notes}</div>}
-
+ 
                     {/* Only show changes for UPDATE actions */}
                     {entry.action === "UPDATED" &&
                       entry.changes &&
@@ -275,10 +295,10 @@ export default function FindDevice() {
                                   (!("from" in change) && !("to" in change))
                                 )
                                   return null;
-
+ 
                                 const fromValue = change.from ?? "Null";
                                 const toValue = change.to ?? "—";
-
+ 
                                 return (
                                   <li key={i}>
                                     <strong>{field}:</strong>{" "}
@@ -294,7 +314,7 @@ export default function FindDevice() {
                 ))}
               </ul>
             )}
-
+ 
             <button
               onClick={() => setShowAuditModal(false)}
               className="mt-4 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800"

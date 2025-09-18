@@ -109,7 +109,7 @@ const Map = () => {
   return (
     <div className="flex h-screen w-full">
       {/* Sidebar */}
-      <div className="w-1/3 p-4 overflow-y-auto bg-gray-100 border-r">
+      <div className="w-1/3 p-4 overflow-y-hidden bg-gray-100 border-r">
         <h2 className="text-xl font-bold mb-4 text-blue-700">Scanned Devices</h2>
         <div className="flex gap-2 mb-4 flex-wrap">
           <button

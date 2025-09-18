@@ -14,6 +14,8 @@ import Login from "../Pages/Auth/Login";
 import RequestAccess from "../Pages/Auth/RequestAccess";
 import LoginLayout from "../layouts/LoginLayout";
 import DeletedDevices from "../Pages/Inventory/DeletedDevices";
+import Dashboard from "../Pages/HomePage/Home";
+
 
 
 const AppRoutes = () => {
@@ -31,7 +33,7 @@ const AppRoutes = () => {
 
       {/* Protected routes under MainLayout */}
       <Route path="/home" element={<MainLayout />}>
-        <Route index element={<Home />} />
+        <Route index element={<Dashboard />} />
       <Route path="inventory" element={<Inventory />} />
       <Route
         path="inventory/add"

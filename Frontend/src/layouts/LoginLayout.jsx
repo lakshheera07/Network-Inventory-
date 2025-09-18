@@ -10,12 +10,12 @@ const LoginLayout = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-600 to-blue-400">
-      <header className="text-center py-10 px-4 bg-white/10 text-blue-100 shadow-md">
+      {/* <header className="text-center py-10 px-4 bg-white/10 text-blue-100 shadow-md">
         <h1 className="text-4xl font-bold tracking-wide text-white mb-2">NetStore</h1>
         <p className="text-lg font-light">Empowering seamless network access and management for all users and admins.</p>
-      </header>
+      </header> */}
 
-      <main className="flex-1 flex flex-col items-center justify-center bg-[#f4f8fb] bg-[url('/src/assests/Network-BG.png')] bg-cover bg-center">
+      <main className="flex-1 flex flex-col items-center justify-center bg-[#f4f8fb] bg-[url('/src/assests/home.png')] bg-cover bg-center">
         {isHome ? (
           <div className="bg-white rounded-2xl shadow-lg border border-blue-400 p-10 text-center max-w-md w-full animate-fadeIn">
             <h2 className="text-blue-700 text-2xl font-semibold mb-2">Welcome to NetStore</h2>
@@ -40,9 +40,9 @@ const LoginLayout = ({ children }) => {
         )}
       </main>
 
-      <footer className="text-center py-5 bg-gradient-to-r from-blue-800 to-blue-400 text-white text-sm tracking-wide shadow-inner">
+      {/* <footer className="text-center py-5 bg-gradient-to-r from-blue-800 to-blue-400 text-white text-sm tracking-wide shadow-inner">
         &copy; {new Date().getFullYear()} NetStore. All rights reserved.
-      </footer>
+      </footer> */}
     </div>
   );
 };

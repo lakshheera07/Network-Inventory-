@@ -10,7 +10,7 @@ const navLinks = [
   { name: "Inventory", to: "/home/inventory" },
   { name: "Find Devices", to: "/home/find-devices" },
   { name: "Map", to: "/home/map" },
-  { name: "About Us", to: "/home/about-us" },
+  // { name: "About Us", to: "/home/about-us" },
   { name: "Admin Dashboard", to: "/home/admin" }
 ];
 

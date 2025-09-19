@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import NetworkScanner from "../../components/Scanner";
-import Toast from "../../components/toast";
+import Toast from "../../components/Toast";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 

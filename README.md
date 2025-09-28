@@ -72,7 +72,7 @@ For the device discovery feature to work, you must configure your network and th
     Ensure that the SNMP protocol is enabled on all target devices you wish to monitor, as well as their neighboring devices.
 
 2.  **Set Network Range:**
-    Open the `scanner.mjs` file (likely located in the `backend/utils` or a similar directory). Find the variable holding the network's CIDR and update it to match the network range your SNMP-enabled devices are connected to.
+    Open the `scanner.mjs` file. Find the variable holding the network's CIDR and update it to match the network range your SNMP-enabled devices are connected to.
 
     For example, in `scanner.mjs`:
 

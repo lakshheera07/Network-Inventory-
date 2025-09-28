@@ -1,11 +1,8 @@
-Of course\! Here is a well-formatted `README.md` file based on the instructions you provided. You can copy and paste this directly into your project's `README.md` file.
 
------
 
 # Project Title
 
-A brief one-sentence description of your project and what it does. For example: "A full-stack network monitoring application that uses SNMP to discover and manage devices on a local network."
-
+Netstore - A network inventory management application. Netstore uses SNMP protocol to discover the network devices and store it in the tree structure format. 
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your system:

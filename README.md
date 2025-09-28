@@ -1,6 +1,6 @@
 
 
-# Project Title
+# NetStore
 
 Netstore - A network inventory management application. Netstore uses SNMP protocol to discover the network devices and store it in the tree structure format. 
 ## Prerequisites
